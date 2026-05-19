@@ -155,6 +155,8 @@ Respond ONLY with a valid JSON object, no markdown, no explanation outside the J
         info = json.loads(text)
         return jsonify(info)
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
