@@ -7,6 +7,8 @@ import os
 import json
 import csv
 import urllib.request
+import urllib.parse
+import requests as req_lib
 
 load_dotenv()
 
@@ -106,6 +108,73 @@ def analyze_opening():
         'fen': board.fen()
     })
 
+@app.route('/explorer', methods=['POST'])
+def explorer():
+    data = request.get_json()
+    fen = data.get('fen', '')
+    
+    if not fen:
+        return jsonify({'error': 'No FEN provided'}), 400
+    
+    try:
+        response = req_lib.get(
+            'http://www.chessdb.cn/cdb.php',
+            params={
+                'action': 'queryall',
+                'board': fen,
+                'json': 1,
+                'showall': 1,
+                'learn': 0
+            },
+            headers={'User-Agent': 'OpeningTrainer/1.0'},
+            timeout=10
+        )
+        
+        print(f"ChessDB status: {response.status_code}")
+        
+        if response.status_code != 200:
+            return jsonify({'error': f'ChessDB error: {response.status_code}'}), 500
+        
+        result = response.json()
+        print(f"ChessDB result: {result}")
+        
+        if 'moves' not in result:
+            return jsonify({'moves': [], 'total': 0})
+        
+        moves = []
+        for move in result['moves']:
+            score = move.get('score', 0)
+            winrate = move.get('winrate', 0)
+            try:
+                score = float(score)
+            except (ValueError, TypeError):
+                score = None
+            try:
+                winrate = float(winrate)
+            except (ValueError, TypeError):
+                winrate = None
+                
+            moves.append({
+                'san': move.get('san', ''),
+                'score': score,
+                'winrate': winrate,
+                'rank': move.get('rank', 0),
+                'note': move.get('note', '')
+            })
+            
+        moves = [m for m in moves if m['rank'] > 0 or m['winrate'] is not None]
+        moves.sort(key=lambda m: m['rank'], reverse=True)
+            
+        return jsonify({
+            'moves': moves,
+            'total': len(moves)
+        })
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+            
 @app.route('/opening-info', methods=['POST'])
 def opening_info():
     data = request.get_json()
