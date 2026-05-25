@@ -8,7 +8,7 @@ function ExplorerPanel({ explorerData, onMoveClick, isLoading }) {
     </div>
   );
 
-  if (!explorerData || explorerData.moves.length === 0) return (
+  if (!explorerData || !explorerData.moves ||explorerData.moves.length === 0) return (
     <div className="explorer-panel empty">
       <p>No book moves found for this position.</p>
     </div>
@@ -33,8 +33,8 @@ function ExplorerPanel({ explorerData, onMoveClick, isLoading }) {
       <div className="explorer-bar">
         {move.winrate !== null && (
           <>
-            <div className="bar-white" style={{ width: `${Math.min(move.winrate, 100)}%` }} />
-            <div className="bar-black" style={{ width: `${Math.max(100 - move.winrate, 0)}%` }} />
+            <div className="bar-white" style={{ width: `${move.winrate}%` }} />
+            <div className="bar-black" style={{ width: `${100 - move.winrate}%` }} />
           </>
         )}
       </div>
@@ -46,6 +46,9 @@ function ExplorerPanel({ explorerData, onMoveClick, isLoading }) {
     </span>
     {move.winrate !== null && (
       <span className="explorer-winrate">{move.winrate.toFixed(1)}%</span>
+    )}
+    {move.winrate === null && (
+      <span className="explorer-winrate" style={{color:'#444'}}>??</span>
     )}
   </div>
 ))}

@@ -74,9 +74,12 @@ function App() {
         body: JSON.stringify({ fen })
       });
       const data = await res.json();
+      console.log('Explorer data received:', data);
       setExplorerData(data);
     } catch (err) {
       console.error('Explorer error:', err);
+    } finally {
+      setIsExplorerLoading(false);
     }
   }, []);
 

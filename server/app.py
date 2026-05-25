@@ -162,8 +162,8 @@ def explorer():
                 'note': move.get('note', '')
             })
             
-        moves = [m for m in moves if m['rank'] > 0 or m['winrate'] is not None]
-        moves.sort(key=lambda m: m['rank'], reverse=True)
+        moves = [m for m in moves if m['rank'] > 0 and m['winrate'] is not None]
+        moves.sort(key=lambda m: (m['rank'], m['winrate'] if m['winrate'] else 0), reverse=True)
             
         return jsonify({
             'moves': moves,
@@ -191,7 +191,8 @@ def opening_info():
     ])
 
     prompt = f"""
-You are a strong chess coach explaining openings to a player rated under 1600.
+You are a strong chess coach rated over 2600 elo explaining openings to a player rated under 1600.
+Be concrete and practical. Avoid vague generalities Focus on specific plans and moves. Your answers should not sound sketchy for an advanced player.
 
 Opening: {opening_name} ({eco_code})
 Moves: {moves_str}
@@ -210,7 +211,7 @@ Respond ONLY with a valid JSON object, no markdown, no explanation outside the J
 
     try:
         response = client.models.generate_content(
-            model="gemini-2.0-flash",
+            model="gemini-2.5-flash",
             contents=prompt
         )
         text = response.text.strip()
