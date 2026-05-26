@@ -35,7 +35,7 @@ function App() {
   const fetchExplorer = useCallback(async (fen) => {
     setIsExplorerLoading(true);
     try {
-      const res = await fetch('https://opening-trainer-api-2du6.onrender.com', {
+      const res = await fetch('https://opening-trainer-api-2du6.onrender.com/explorer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fen })
@@ -55,7 +55,7 @@ function App() {
     setIsAnalyzing(true);
     try {
       // Step 1 - identify opening
-      const analyzeRes = await fetch('https://opening-trainer-api-2du6.onrender.com', {
+      const analyzeRes = await fetch('https://opening-trainer-api-2du6.onrender.com/analyze-opening', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ moves: currentMoves })
@@ -65,7 +65,7 @@ function App() {
       fetchExplorer(analyzeData.fen);
 
       // Step 2 - get AI explanation
-      const infoRes = await fetch('https://opening-trainer-api-2du6.onrender.com', {
+      const infoRes = await fetch('https://opening-trainer-api-2du6.onrender.com/opening-info', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
