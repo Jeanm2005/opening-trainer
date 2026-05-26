@@ -32,6 +32,24 @@ function App() {
       return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+  const fetchExplorer = useCallback(async (fen) => {
+    setIsExplorerLoading(true);
+    try {
+      const res = await fetch('https://opening-trainer-api-2du6.onrender.com', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fen })
+      });
+      const data = await res.json();
+      console.log('Explorer data received:', data);
+      setExplorerData(data);
+    } catch (err) {
+      console.error('Explorer error:', err);
+    } finally {
+      setIsExplorerLoading(false);
+    }
+  }, []);
+
   const analyzePosition = useCallback(async (currentMoves) => {
     if (currentMoves.length === 0) return;
     setIsAnalyzing(true);
@@ -64,24 +82,6 @@ function App() {
       setIsAnalyzing(false);
     }
   }, [fetchExplorer]);
-
-  const fetchExplorer = useCallback(async (fen) => {
-    setIsExplorerLoading(true);
-    try {
-      const res = await fetch('https://opening-trainer-api-2du6.onrender.com', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fen })
-      });
-      const data = await res.json();
-      console.log('Explorer data received:', data);
-      setExplorerData(data);
-    } catch (err) {
-      console.error('Explorer error:', err);
-    } finally {
-      setIsExplorerLoading(false);
-    }
-  }, []);
 
   const buildGameAtCursor = useCallback((hist, cur) => {
     const g = new Chess();
