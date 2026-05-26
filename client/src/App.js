@@ -63,7 +63,7 @@ function App() {
     } finally {
       setIsAnalyzing(false);
     }
-  }, []);
+  }, [fetchExplorer]);
 
   const fetchExplorer = useCallback(async (fen) => {
     setIsExplorerLoading(true);
@@ -89,7 +89,7 @@ function App() {
       g.move(hist[i]);
     }
     return g;
-  })
+  }, []);
 
   const onDrop = useCallback(({ sourceSquare, targetSquare }) => {
     console.log('DROP fired:', sourceSquare, targetSquare);
@@ -170,7 +170,7 @@ function App() {
     setGame(newGame);
     setSelectedSquare(null);
     analyzePosition(history.slice(0, newCursor));
-  }, [cursor, history, buildGameAtCursor, analyzePosition, fetchExplorer]);
+  }, [cursor, history, buildGameAtCursor, analyzePosition]);
 
   const stepForward = useCallback(() => {
     if (cursor === history.length) return;
@@ -180,7 +180,7 @@ function App() {
     setGame(newGame);
     setSelectedSquare(null);
     analyzePosition(history.slice(0, newCursor));
-  }, [cursor, history, buildGameAtCursor, analyzePosition, fetchExplorer]);
+  }, [cursor, history, buildGameAtCursor, analyzePosition]);
 
   
   useEffect(() => {
