@@ -218,7 +218,7 @@ Respond ONLY with a valid JSON object, no markdown, no explanation outside the J
     try:
         response = client.models.generate_content(
             model="gemini-2.5-flash",
-            contents=prompt
+            contents=prompt,
             config={"temperature": 0.2}
         )
         text = response.text.strip()
