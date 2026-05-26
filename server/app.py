@@ -15,7 +15,10 @@ load_dotenv()
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=[
+    "https://opening-trainer-zssv.vercel.app",
+    "http://localhost:3000"
+])
 
 # --- Load Lichess ECO dataset at startup ---
 ECO_LOOKUP = {}
