@@ -194,11 +194,14 @@ def opening_info():
     ])
 
     prompt = f"""
-You are a strong chess coach rated over 2600 elo explaining openings to a player rated under 1600.
-Be concrete and practical. Avoid vague generalities Focus on specific plans and moves. Your answers should not sound sketchy for an advanced player.
+You are a chess coach explaining opening theory to a club player rated under 1600.
+Base your explanation strictly on established opening theory for this specific opening.
+Do not invent move sequences. If unsure about a specific claim, use "typically" or "often".
+Avoid vague generalities — focus on concrete plans, piece placement, and pawn structure.
+Do not mention specific move sequences beyond move 10.
 
 Opening: {opening_name} ({eco_code})
-Moves: {moves_str}
+Moves played so far: {moves_str}
 
 Respond ONLY with a valid JSON object, no markdown, no explanation outside the JSON.
 
@@ -216,6 +219,7 @@ Respond ONLY with a valid JSON object, no markdown, no explanation outside the J
         response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=prompt
+            config={"temperature": 0.2}
         )
         text = response.text.strip()
         
